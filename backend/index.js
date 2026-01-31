@@ -25,7 +25,7 @@ app.get('/api/expenses', async (req, res) => {
     res.json({
         status : 'ok',
         data : {
-            name : 'malik',
+            name : 'data pengeluaran',
             pengeluaran : data.rows
         }
     })

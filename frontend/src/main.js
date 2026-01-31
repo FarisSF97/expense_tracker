@@ -1,6 +1,6 @@
 async function getExpenses (){
   const data = await fetch(
-    "http://localhost:3000/api/expenses",
+    "http://localhost:3100/api/expenses",
     {
       method: "GET",
     }
