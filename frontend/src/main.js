@@ -38,13 +38,19 @@ const listExpenses = document.getElementById("expense-list")
 console.log(listExpenses)
 
 function renderExpenseList (parameter) {
-
   const li = document.createElement("li")
-
-  li.textContent = `${parameter.description} | ${parameter.amount}`
-
+  
+  const descriptionSpan = document.createElement("span")
+  descriptionSpan.textContent = parameter.description
+  
+  const amountSpan = document.createElement("span")
+  amountSpan.textContent = `Rp ${parseFloat(parameter.amount).toLocaleString('id-ID')}`
+  amountSpan.style.fontWeight = "bold"
+  
+  li.appendChild(descriptionSpan)
+  li.appendChild(amountSpan)
+  
   listExpenses.appendChild(li)
-
 }
 
 async function render (){
@@ -60,6 +66,37 @@ async function render (){
 
 }
 
+// Modal functionality
+const modal = document.getElementById("expense-modal")
+const addBtn = document.getElementById("add-expense-btn")
+const closeBtn = document.getElementsByClassName("close")[0]
+const cancelBtn = document.getElementsByClassName("cancel-btn")[0]
+
+// Open modal
+addBtn.onclick = function() {
+  modal.style.display = "block"
+}
+
+// Close modal when clicking X
+closeBtn.onclick = function() {
+  modal.style.display = "none"
+  document.getElementById("expense-form").reset()
+}
+
+// Close modal when clicking Cancel
+cancelBtn.onclick = function() {
+  modal.style.display = "none"
+  document.getElementById("expense-form").reset()
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none"
+    document.getElementById("expense-form").reset()
+  }
+}
+
 // Handle form submission
 document.getElementById("expense-form").addEventListener("submit", async (e) => {
   e.preventDefault()
@@ -71,8 +108,9 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
     const result = await addExpense(description, amount)
     
     if (result.status === 'OK') {
-      // Clear form
+      // Clear form and close modal
       document.getElementById("expense-form").reset()
+      modal.style.display = "none"
       
       // Refresh the expense list
       listExpenses.innerHTML = "" // Clear current list
