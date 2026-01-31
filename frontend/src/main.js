@@ -13,6 +13,25 @@ async function getExpenses (){
   return dataObj;
 }
 
+async function addExpense(description, amount) {
+  const response = await fetch(
+    "http://localhost:3100/api/expenses",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: description,
+        amount: parseFloat(amount)
+      })
+    }
+  )
+
+  const result = await response.json()
+  console.log(result)
+  return result
+}
 
 const listExpenses = document.getElementById("expense-list")
 
@@ -40,5 +59,33 @@ async function render (){
   }
 
 }
+
+// Handle form submission
+document.getElementById("expense-form").addEventListener("submit", async (e) => {
+  e.preventDefault()
+  
+  const description = document.getElementById("description").value
+  const amount = document.getElementById("amount").value
+  
+  try {
+    const result = await addExpense(description, amount)
+    
+    if (result.status === 'OK') {
+      // Clear form
+      document.getElementById("expense-form").reset()
+      
+      // Refresh the expense list
+      listExpenses.innerHTML = "" // Clear current list
+      await render() // Re-render the list
+      
+      alert("Pengeluaran berhasil ditambahkan!")
+    } else {
+      alert("Gagal menambahkan pengeluaran")
+    }
+  } catch (error) {
+    console.error("Error adding expense:", error)
+    alert("Terjadi kesalahan saat menambahkan pengeluaran")
+  }
+})
 
 render()
