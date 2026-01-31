@@ -53,6 +53,22 @@ async function updateExpense(id, description, amount) {
   return result
 }
 
+async function deleteExpense(id) {
+  const response = await fetch(
+    `http://localhost:3100/api/expenses/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }
+  )
+
+  const result = await response.json()
+  console.log(result)
+  return result
+}
+
 // Get DOM elements
 const listExpenses = document.getElementById("expense-list")
 
@@ -97,8 +113,15 @@ function renderExpenseList (parameter) {
   editBtn.textContent = "Edit"
   editBtn.onclick = () => openEditModal(parameter)
   
+  // Create delete button
+  const deleteBtn = document.createElement("button")
+  deleteBtn.className = "delete-btn"
+  deleteBtn.textContent = "Delete"
+  deleteBtn.onclick = () => handleDelete(parameter.id, parameter.description)
+  
   li.appendChild(contentDiv)
   li.appendChild(editBtn)
+  li.appendChild(deleteBtn)
   
   listExpenses.appendChild(li)
 }
@@ -191,5 +214,24 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
     alert("Terjadi kesalahan saat menyimpan pengeluaran")
   }
 })
+
+async function handleDelete(id, description) {
+  if (confirm(`Apakah Anda yakin ingin menghapus pengeluaran "${description}"?`)) {
+    try {
+      const result = await deleteExpense(id)
+      if (result.status === 'OK') {
+        alert("Pengeluaran berhasil dihapus!")
+        // Refresh the expense list
+        listExpenses.innerHTML = "" // Clear current list
+        await render() // Re-render the list
+      } else {
+        alert("Gagal menghapus pengeluaran")
+      }
+    } catch (error) {
+      console.error("Error deleting expense:", error)
+      alert("Terjadi kesalahan saat menghapus pengeluaran")
+    }
+  }
+}
 
 render()
