@@ -22,7 +22,10 @@ export const up = (pgm) => {
             type : "INT",
             notNull: true
         }
-    })
+    });
+
+    // Add dummy data
+    pgm.sql("INSERT INTO pengeluaran (description, amount) VALUES ('beli makanan', 4000)");
 };
 
 /**
