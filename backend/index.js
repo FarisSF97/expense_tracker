@@ -13,7 +13,8 @@ app.get('/', (req, res) => {
         message: 'Expense Tracking API is running',
         endpoints: {
             'GET /api/expenses': 'Get all expenses',
-            'POST /api/expenses': 'Create a new expense'
+            'POST /api/expenses': 'Create a new expense',
+            'PUT /api/expenses/:id': 'Update an expense'
         }
     })
 })
@@ -47,6 +48,35 @@ app.post('/api/expenses', async (req, res)=> {
             hasil : isi.rows
         }
     )
+})
+
+app.put('/api/expenses/:id', async (req, res) => {
+    const { id } = req.params
+    const { description, amount } = req.body
+
+    try {
+        const result = await pool.query(
+            "UPDATE pengeluaran SET description = $1, amount = $2 WHERE id = $3 RETURNING *",
+            [description, amount, id]
+        )
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                status: 'Error',
+                message: 'Expense not found'
+            })
+        }
+
+        res.json({
+            status: 'OK',
+            hasil: result.rows[0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: 'Error',
+            message: error.message
+        })
+    }
 })
 
 app.listen(3100, ()=> {

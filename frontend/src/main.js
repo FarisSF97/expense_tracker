@@ -91,12 +91,11 @@ function renderExpenseList (parameter) {
   contentDiv.appendChild(descriptionSpan)
   contentDiv.appendChild(amountSpan)
   
-  // Create edit button (disabled since PUT endpoint was removed)
+  // Create edit button
   const editBtn = document.createElement("button")
   editBtn.className = "edit-btn"
   editBtn.textContent = "Edit"
-  editBtn.disabled = true
-  editBtn.title = "Edit functionality disabled - PUT endpoint removed"
+  editBtn.onclick = () => openEditModal(parameter)
   
   li.appendChild(contentDiv)
   li.appendChild(editBtn)
@@ -160,9 +159,13 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
     let result
     
     if (expenseId) {
-      // Update existing expense - disabled since PUT endpoint was removed
-      alert("Edit functionality disabled - PUT endpoint was removed from backend")
-      return
+      // Update existing expense
+      result = await updateExpense(expenseId, description, amount)
+      if (result.status === 'OK') {
+        alert("Pengeluaran berhasil diubah!")
+      } else {
+        alert("Gagal mengubah pengeluaran")
+      }
     } else {
       // Add new expense
       result = await addExpense(description, amount)
