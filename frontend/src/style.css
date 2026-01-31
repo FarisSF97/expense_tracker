@@ -238,6 +238,29 @@ button:focus-visible {
   background-color: #333;
 }
 
+.expense-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+.edit-btn {
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  margin-left: 1rem;
+}
+
+.edit-btn:hover {
+  background-color: #646cff;
+}
+
 @media (prefers-color-scheme: light) {
   body {
     background-color: #ffffff;
@@ -277,6 +300,14 @@ button:focus-visible {
   
   #expense-list li:hover {
     background-color: #e8e8e8;
+  }
+  
+  .edit-btn {
+    background-color: #666;
+  }
+  
+  .edit-btn:hover {
+    background-color: #646cff;
   }
   
   a:hover {

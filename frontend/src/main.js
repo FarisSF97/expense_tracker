@@ -33,12 +33,53 @@ async function addExpense(description, amount) {
   return result
 }
 
+async function updateExpense(id, description, amount) {
+  const response = await fetch(
+    `http://localhost:3100/api/expenses/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: description,
+        amount: parseFloat(amount)
+      })
+    }
+  )
+
+  const result = await response.json()
+  console.log(result)
+  return result
+}
+
+// Get DOM elements
 const listExpenses = document.getElementById("expense-list")
 
-console.log(listExpenses)
+// Modal functions
+function openAddModal() {
+  document.getElementById("expense-form").reset()
+  delete document.getElementById("expense-form").dataset.expenseId
+  document.querySelector("#expense-modal h2").textContent = "Tambah Pengeluaran"
+  document.querySelector("#expense-form button[type='submit']").textContent = "Tambah Pengeluaran"
+  modal.style.display = "block"
+}
+
+function openEditModal(expense) {
+  document.getElementById("description").value = expense.description
+  document.getElementById("amount").value = expense.amount
+  document.getElementById("expense-form").dataset.expenseId = expense.id
+  document.querySelector("#expense-modal h2").textContent = "Edit Pengeluaran"
+  document.querySelector("#expense-form button[type='submit']").textContent = "Update Pengeluaran"
+  modal.style.display = "block"
+}
 
 function renderExpenseList (parameter) {
   const li = document.createElement("li")
+  
+  // Create content container
+  const contentDiv = document.createElement("div")
+  contentDiv.className = "expense-content"
   
   const descriptionSpan = document.createElement("span")
   descriptionSpan.textContent = parameter.description
@@ -47,8 +88,18 @@ function renderExpenseList (parameter) {
   amountSpan.textContent = `Rp ${parseFloat(parameter.amount).toLocaleString('id-ID')}`
   amountSpan.style.fontWeight = "bold"
   
-  li.appendChild(descriptionSpan)
-  li.appendChild(amountSpan)
+  contentDiv.appendChild(descriptionSpan)
+  contentDiv.appendChild(amountSpan)
+  
+  // Create edit button (disabled since PUT endpoint was removed)
+  const editBtn = document.createElement("button")
+  editBtn.className = "edit-btn"
+  editBtn.textContent = "Edit"
+  editBtn.disabled = true
+  editBtn.title = "Edit functionality disabled - PUT endpoint removed"
+  
+  li.appendChild(contentDiv)
+  li.appendChild(editBtn)
   
   listExpenses.appendChild(li)
 }
@@ -74,7 +125,7 @@ const cancelBtn = document.getElementsByClassName("cancel-btn")[0]
 
 // Open modal
 addBtn.onclick = function() {
-  modal.style.display = "block"
+  openAddModal()
 }
 
 // Close modal when clicking X
@@ -103,26 +154,38 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
   
   const description = document.getElementById("description").value
   const amount = document.getElementById("amount").value
+  const expenseId = document.getElementById("expense-form").dataset.expenseId
   
   try {
-    const result = await addExpense(description, amount)
+    let result
+    
+    if (expenseId) {
+      // Update existing expense - disabled since PUT endpoint was removed
+      alert("Edit functionality disabled - PUT endpoint was removed from backend")
+      return
+    } else {
+      // Add new expense
+      result = await addExpense(description, amount)
+      if (result.status === 'OK') {
+        alert("Pengeluaran berhasil ditambahkan!")
+      } else {
+        alert("Gagal menambahkan pengeluaran")
+      }
+    }
     
     if (result.status === 'OK') {
       // Clear form and close modal
       document.getElementById("expense-form").reset()
+      delete document.getElementById("expense-form").dataset.expenseId
       modal.style.display = "none"
       
       // Refresh the expense list
       listExpenses.innerHTML = "" // Clear current list
       await render() // Re-render the list
-      
-      alert("Pengeluaran berhasil ditambahkan!")
-    } else {
-      alert("Gagal menambahkan pengeluaran")
     }
   } catch (error) {
-    console.error("Error adding expense:", error)
-    alert("Terjadi kesalahan saat menambahkan pengeluaran")
+    console.error("Error saving expense:", error)
+    alert("Terjadi kesalahan saat menyimpan pengeluaran")
   }
 })
 
