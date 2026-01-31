@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "dotenv -e .env -- nodemon index.js",
+    "migrate": "dotenv -e .env -- node-pg-migrate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv-cli": "^11.0.0",
+    "express": "^5.2.1",
+    "node-pg-migrate": "^8.0.4",
+    "nodemon": "^3.1.11",
+    "pg": "^8.16.3"
+  }
+}
