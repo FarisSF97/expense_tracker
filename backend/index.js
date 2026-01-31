@@ -8,6 +8,16 @@ app.use(cors())
 
 app.use(express.json())
 
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Expense Tracking API is running',
+        endpoints: {
+            'GET /api/expenses': 'Get all expenses',
+            'POST /api/expenses': 'Create a new expense'
+        }
+    })
+})
+
 app.get('/api/expenses', async (req, res) => {
 
     const data = await pool.query('SELECT * FROM pengeluaran;')
@@ -39,6 +49,6 @@ app.post('/api/expenses', async (req, res)=> {
     )
 })
 
-app.listen(3000, ()=> {
-    console.log('jalan di port 3000')
+app.listen(3100, ()=> {
+    console.log('jalan di port 3100')
 })
